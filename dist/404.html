@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0F3B66">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>e-Cidadania: Letramento Político Mobile</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230F3B66'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+  <link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body class="desktop-view">
+
+  <!-- Controle de visualização no desktop (Moldura de celular vs Tela cheia) -->
+  <div class="view-mode-bar" id="viewModeBar">
+    <div class="view-mode-info">
+      <span class="pulse-indicator"></span>
+      <strong>Letramento Político Mobile</strong> • e-Cidadania Senado Federal
+    </div>
+    <div class="view-mode-actions">
+      <button id="toggleFullscreenBtn" class="pill-btn" title="Alternar entre modo Smartphone e Tela Cheia">
+        Modo Celular (Ativo)
+      </button>
+      <a href="https://www12.senado.leg.br/ecidadania/principalmateria" target="_blank" rel="noopener" class="pill-btn external">
+        Abrir Fonte Oficial ↗
+      </a>
+    </div>
+  </div>
+
+  <!-- Contêiner do Smartphone Mockup -->
+  <div class="device-frame" id="deviceFrame">
+    
+    <!-- Notch / Ilha Dinâmica do Celular -->
+    <div class="device-notch">
+      <div class="notch-camera"></div>
+      <div class="notch-speaker"></div>
+    </div>
+    <div class="device-status-bar">
+      <span class="status-time" id="statusTime">12:30</span>
+      <div class="status-icons">
+        <span>5G</span>
+        <span class="signal-bars">
+          <span class="bar b1"></span><span class="bar b2"></span><span class="bar b3"></span><span class="bar b4"></span>
+        </span>
+        <span class="battery-tag">98%</span>
+      </div>
+    </div>
+
+    <!-- TELA PRINCIPAL DO APLICATIVO -->
+    <div class="app-viewport" id="appViewport">
+
+      <!-- HEADER DO APP -->
+      <header class="app-header">
+        <div class="header-top">
+          <div class="brand">
+            <div class="brand-badge">SENADO</div>
+            <div class="brand-text">
+              <h1>e-Cidadania</h1>
+              <span class="subbrand">Letramento Político</span>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button class="icon-btn" id="refreshBtn" title="Atualizar consultas do Senado" aria-label="Atualizar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+              </svg>
+            </button>
+            <button class="icon-btn" id="themeToggleBtn" title="Modo Claro/Escuro" aria-label="Alternar tema">
+              <span class="icon" id="themeIcon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Banner de estatísticas em tempo real -->
+        <div class="stats-banner">
+          <div class="stat-item">
+            <span class="stat-number" id="statTotalMaterias">100</span>
+            <span class="stat-label">Consultas Abertas</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number" id="statTotalVotos">39.4M+</span>
+            <span class="stat-label">Votos Populares</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">100%</span>
+            <span class="stat-label">Linguagem Cidadã</span>
+          </div>
+        </div>
+
+        <!-- Barra de busca instantânea -->
+        <div class="search-bar-wrap">
+          <span class="search-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </span>
+          <input type="text" id="searchInput" placeholder="Buscar por tema, número (ex: PL 5064) ou palavra..." autocomplete="off">
+          <button id="clearSearchBtn" class="clear-btn" style="display: none;">✕</button>
+        </div>
+
+        <!-- Filtros rápidos horizontais por Temas (Carrossel tátil) -->
+        <nav class="theme-chips-scroller" id="themeChipsNav" aria-label="Filtro por Temas">
+          <!-- Gerado dinamicamente via JS -->
+        </nav>
+      </header>
+
+      <!-- CONTEÚDO PRINCIPAL (COM ABAS) -->
+      <main class="app-content">
+
+        <!-- ABA 1: CONSULTAS PÚBLICAS (FEED PRINCIPAL) -->
+        <section id="tab-consultas" class="tab-pane active">
+          <div class="feed-controls">
+            <div class="results-count" id="resultsCount">Carregando consultas...</div>
+            <div class="sort-select-wrap">
+              <label for="sortSelect">Ordenar:</label>
+              <select id="sortSelect">
+                <option value="mais_votados">Mais Votadas</option>
+                <option value="mais_aprovadas">Maior Apoio (% Sim)</option>
+                <option value="mais_rejeitadas">Maior Rejeição (% Não)</option>
+                <option value="recentes">Mais Recentes</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Feed dinâmico de cards de proposição -->
+          <div class="propositions-list" id="propositionsList">
+            <!-- Cards injetados via app.js -->
+          </div>
+
+          <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </div>
+            <h3>Nenhuma consulta encontrada</h3>
+            <p>Tente alterar o termo de busca ou selecionar outro tema legislativo.</p>
+            <button class="pill-btn primary" id="resetFiltersBtn">Ver todas as consultas</button>
+          </div>
+        </section>
+
+        <!-- ABA 2: CATÁLOGO DE TEMAS -->
+        <section id="tab-temas" class="tab-pane">
+          <div class="pane-header">
+            <h2>Explorar por Temas</h2>
+            <p>Descubra como os projetos de lei e consultas se dividem por áreas da sociedade.</p>
+          </div>
+          <div class="themes-grid" id="themesGrid">
+            <!-- Cards de temas gerados por JS -->
+          </div>
+        </section>
+
+        <!-- ABA 3: CENTRAL DE LETRAMENTO POLÍTICO -->
+        <section id="tab-letramento" class="tab-pane">
+          <div class="pane-header">
+            <h2>Letramento Político</h2>
+            <p>Aprenda a decifrar a política e as leis sem juridiquês.</p>
+          </div>
+
+          <!-- Módulo 1: O Dicionário das Siglas -->
+          <div class="education-card">
+            <div class="edu-card-header">
+              <span class="edu-badge">Glossário</span>
+              <h3>O que significa cada sigla no Congresso?</h3>
+            </div>
+            <p class="edu-intro">No e-Cidadania, cada proposta tem uma sigla. Saiba o que cada uma representa:</p>
+            
+            <div class="siglas-accordion" id="siglasAccordion">
+              <details class="sigla-item" open>
+                <summary>
+                  <span class="sigla-tag pl">PL</span>
+                  <strong>Projeto de Lei Ordinária</strong>
+                </summary>
+                <div class="sigla-desc">
+                  É a forma mais comum de criar ou mudar leis. Regulamenta temas do dia a dia (direitos, trânsito, crimes). Para ser aprovado, exige <strong>maioria simples</strong> (metade mais um dos presentes na votação) tanto na Câmara quanto no Senado, antes de ir à sanção do Presidente.
+                </div>
+              </details>
+
+              <details class="sigla-item">
+                <summary>
+                  <span class="sigla-tag pec">PEC</span>
+                  <strong>Proposta de Emenda à Constituição</strong>
+                </summary>
+                <div class="sigla-desc">
+                  Muda a lei máxima do país (a Constituição de 1988). É o tipo mais rigoroso de aprovar: exige <strong>3/5 dos votos</strong> (60%) em <strong>dois turnos</strong> de votação na Câmara (308 deputados) e no Senado (49 senadores). O Presidente não pode vetar.
+                </div>
+              </details>
+
+              <details class="sigla-item">
+                <summary>
+                  <span class="sigla-tag mpv">MPV</span>
+                  <strong>Medida Provisória</strong>
+                </summary>
+                <div class="sigla-desc">
+                  Criada diretamente pelo Presidente em casos de urgência e relevância. Tem <strong>força de lei imediata</strong> por até 60 dias (prorrogáveis por mais 60). Precisa ser aprovada pelo Congresso nesse prazo, senão perde a validade.
+                </div>
+              </details>
+
+              <details class="sigla-item">
+                <summary>
+                  <span class="sigla-tag plp">PLP</span>
+                  <strong>Projeto de Lei Complementar</strong>
+                </summary>
+                <div class="sigla-desc">
+                  Usado quando a própria Constituição exige regras específicas (como criação de tributos ou finanças públicas). Exige <strong>maioria absoluta</strong> (metade mais um de todos os parlamentares eleitos, ou seja, 41 senadores).
+                </div>
+              </details>
+
+              <details class="sigla-item">
+                <summary>
+                  <span class="sigla-tag sug">SUG</span>
+                  <strong>Sugestão Legislativa (Iniciativa Popular)</strong>
+                </summary>
+                <div class="sigla-desc">
+                  Uma ideia criada por qualquer cidadão no e-Cidadania. Se receber o apoio de 20.000 pessoas em até 4 meses, a ideia é formalmente enviada para debate na Comissão de Direitos Humanos e Legislação Participativa (CDH) do Senado.
+                </div>
+              </details>
+
+              <details class="sigla-item">
+                <summary>
+                  <span class="sigla-tag pdl">PDL / PDS</span>
+                  <strong>Decreto Legislativo</strong>
+                </summary>
+                <div class="sigla-desc">
+                  Regula assuntos de competência exclusiva do Congresso Nacional, como ratificar acordos internacionais ou sustar atos do Poder Executivo que exorbitem do poder regulamentar.
+                </div>
+              </details>
+            </div>
+          </div>
+
+          <!-- Módulo 2: O Caminho de uma Lei -->
+          <div class="education-card">
+            <div class="edu-card-header">
+              <span class="edu-badge">Infográfico</span>
+              <h3>Como nasce uma Lei no Brasil?</h3>
+            </div>
+            <div class="timeline-stepper">
+              <div class="step-node">
+                <div class="step-num">1</div>
+                <div class="step-body">
+                  <strong>Apresentação</strong>
+                  <p>Um Senador, Deputado, Presidente da República ou a sociedade (por SUG ou iniciativa popular) protocola a proposta.</p>
+                </div>
+              </div>
+              <div class="step-node">
+                <div class="step-num">2</div>
+                <div class="step-body">
+                  <strong>Consulta Pública e-Cidadania</strong>
+                  <p>A matéria é disponibilizada publicamente para voto dos cidadãos. O relatório de votos é anexado formalmente ao processo do relator.</p>
+                </div>
+              </div>
+              <div class="step-node">
+                <div class="step-num">3</div>
+                <div class="step-body">
+                  <strong>Comissões Temáticas</strong>
+                  <p>Colegiados especializados analisam mérito e constitucionalidade (ex: Comissão de Constituição e Justiça, Saúde, Educação).</p>
+                </div>
+              </div>
+              <div class="step-node">
+                <div class="step-num">4</div>
+                <div class="step-body">
+                  <strong>Plenário do Senado e da Câmara</strong>
+                  <p>O conjunto de senadores e deputados debate e delibera sobre a aprovação final do texto.</p>
+                </div>
+              </div>
+              <div class="step-node">
+                <div class="step-num">5</div>
+                <div class="step-body">
+                  <strong>Sanção ou Veto Presidencial</strong>
+                  <p>Se aprovado em ambas as Casas, o texto vai ao Presidente para sanção (vira lei) ou veto total/parcial (que pode ser mantido ou derrubado pelo Congresso).</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Módulo 3: O seu Voto no e-Cidadania Tem Poder? -->
+          <div class="education-card highlight-card">
+            <div class="edu-card-header">
+              <span class="edu-badge gold">Impacto Real</span>
+              <h3>Como o Senado utiliza os votos do e-Cidadania?</h3>
+            </div>
+            <p>
+              A consulta pública online tem efeito institucional no processo legislativo:
+            </p>
+            <ul class="bullet-highlights">
+              <li><strong>Relatórios Oficiais:</strong> Ao elaborar seu parecer, a assessoria técnica do senador relator anexa o relatório quantitativo de manifestações do e-Cidadania.</li>
+              <li><strong>Fundamentação em Plenário:</strong> Os parlamentares frequentemente citam o percentual popular em seus discursos para defender ou questionar o avanço de uma pauta.</li>
+              <li><strong>Revisão de Propostas:</strong> Proposições com expressiva rejeição ou apoio popular já motivaram audiências públicas, emendas de alteração e revisões de mérito.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- ABA 4: MEU PAINEL CIDADÃO & SIMULADOR -->
+        <section id="tab-perfil" class="tab-pane">
+          <div class="pane-header">
+            <h2>Meu Perfil Cidadão</h2>
+            <p>Acompanhe suas posições simuladas e compare com o quadro nacional.</p>
+          </div>
+
+          <div class="user-stats-card">
+            <div class="user-stat-circle">
+              <span id="userTotalSimulated">0</span>
+              <small>Simulações</small>
+            </div>
+            <div class="user-stat-breakdown">
+              <div class="user-breakdown-row">
+                <span class="dot sim"></span> Votos SIM simulados: <strong id="userCountSim">0</strong>
+              </div>
+              <div class="user-breakdown-row">
+                <span class="dot nao"></span> Votos NÃO simulados: <strong id="userCountNao">0</strong>
+              </div>
+              <div class="user-breakdown-row">
+                <span class="dot gold"></span> Salvas para acompanhar: <strong id="userCountSaved">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="saved-section">
+            <div class="saved-header">
+              <h3>Matérias Salvas</h3>
+              <button class="text-btn danger" id="clearDataBtn" title="Limpar histórico local">Limpar Dados</button>
+            </div>
+            <div class="saved-list" id="savedList">
+              <!-- Matérias favoritadas -->
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      <!-- BARRA DE NAVEGAÇÃO INFERIOR -->
+      <nav class="bottom-nav" aria-label="Navegação do aplicativo">
+        <button class="nav-item active" data-tab="tab-consultas">
+          <span class="nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </span>
+          <span class="nav-label">Consultas</span>
+        </button>
+        <button class="nav-item" data-tab="tab-temas">
+          <span class="nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+            </svg>
+          </span>
+          <span class="nav-label">Temas</span>
+        </button>
+        <button class="nav-item" data-tab="tab-letramento">
+          <span class="nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+          </span>
+          <span class="nav-label">Letramento</span>
+        </button>
+        <button class="nav-item" data-tab="tab-perfil">
+          <span class="nav-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </span>
+          <span class="nav-label">Meu Voto</span>
+        </button>
+      </nav>
+
+    </div><!-- Fim app-viewport -->
+
+    <!-- Home indicator -->
+    <div class="device-home-indicator"></div>
+
+  </div><!-- Fim device-frame -->
+
+  <!-- MODAL DE DETALHES DA MATÉRIA -->
+  <div class="modal-backdrop" id="materiaModal" role="dialog" aria-modal="true" style="display: none;">
+    <div class="modal-sheet">
+      <div class="sheet-handle"></div>
+      
+      <div class="modal-header">
+        <div class="modal-sigla-row">
+          <span class="modal-tipo-tag" id="modalTipoTag">PL</span>
+          <span class="modal-tema-tag" id="modalTemaTag">Tema</span>
+          <button class="modal-close-btn" id="modalCloseBtn" aria-label="Fechar">✕</button>
+        </div>
+        <h2 id="modalSigla">PL 0000/0000</h2>
+        <span class="modal-tipo-nome" id="modalTipoNome">Projeto de Lei</span>
+      </div>
+
+      <div class="modal-scroll-body">
+        
+        <!-- Bloco de Letramento Didático -->
+        <div class="letramento-box">
+          <div class="letramento-title">
+            <h4>Em Miúdos: O que este projeto propõe?</h4>
+          </div>
+          <p id="modalResumoFacil" class="resumo-destaque">
+            Resumo em linguagem simples do projeto.
+          </p>
+        </div>
+
+        <!-- Ementa Legislativa Original -->
+        <div class="ementa-box">
+          <span class="label">Texto Oficial da Proposta (Ementa):</span>
+          <p id="modalEmenta">Descrição original da matéria em tramitação.</p>
+        </div>
+
+        <!-- Termômetro Popular -->
+        <div class="modal-poll-card">
+          <h4>Votação Popular no e-Cidadania</h4>
+          <div class="poll-bar-large">
+            <div class="bar-fill sim" id="modalBarSim" style="width: 50%;"></div>
+            <div class="bar-fill nao" id="modalBarNao" style="width: 50%;"></div>
+          </div>
+          <div class="poll-numbers">
+            <div class="num-box sim">
+              <span class="label">A favor (SIM)</span>
+              <strong id="modalVotosSim">0</strong>
+              <small id="modalPctSim">0%</small>
+            </div>
+            <div class="num-box nao">
+              <span class="label">Contra (NÃO)</span>
+              <strong id="modalVotosNao">0</strong>
+              <small id="modalPctNao">0%</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simulador de Voto do Cidadão -->
+        <div class="simulador-box">
+          <h4>Como você votaria nesta consulta?</h4>
+          <p class="simulador-hint">Simule seu voto para registrar no seu perfil comparativo:</p>
+          <div class="simulador-buttons">
+            <button class="sim-btn vote-sim" id="modalVoteSimBtn">
+              Votaria SIM
+            </button>
+            <button class="sim-btn vote-nao" id="modalVoteNaoBtn">
+              Votaria NÃO
+            </button>
+          </div>
+          <div class="user-voted-feedback" id="userVotedFeedback" style="display: none;">
+            Seu posicionamento foi salvo no perfil.
+          </div>
+        </div>
+
+        <!-- Ações Oficiais -->
+        <div class="modal-actions-official">
+          <a href="#" target="_blank" rel="noopener" class="pill-btn primary full" id="modalOficialBtn">
+            Votar Oficialmente no e-Cidadania (gov.br) ↗
+          </a>
+          <button class="pill-btn secondary full" id="modalShareBtn">
+            Compartilhar no WhatsApp
+          </button>
+          <button class="pill-btn outline full" id="modalSaveBtn">
+            Salvar para Acompanhar
+          </button>
+        </div>
+
+      </div><!-- Fim modal-scroll-body -->
+
+    </div><!-- Fim modal-sheet -->
+  </div><!-- Fim modal-backdrop -->
+
+  <!-- Toast de Notificação -->
+  <div class="toast" id="toastNotification">Notificação</div>
+
+  <script src="app.js?v=2"></script>
+</body>
+</html>

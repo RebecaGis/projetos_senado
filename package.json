@@ -1,0 +1,11 @@
+{
+  "name": "letramento-politico-senado",
+  "version": "1.0.0",
+  "description": "App de Letramento Politico com Consultas Publicas do Senado Federal",
+  "scripts": {
+    "build": "node -e \"const fs=require('fs'); ['dist','docs'].forEach(dir=>{ fs.mkdirSync(dir,{recursive:true}); ['index.html','404.html','styles.css','app.js','proposicoes.json','manifest.json','.nojekyll','_headers','_redirects'].forEach(f=>{if(fs.existsSync(f))fs.copyFileSync(f,dir+'/'+f);}); }); console.log('Build gerado com sucesso para dist/ e docs/');\""
+  },
+  "keywords": ["senado", "ecidadania", "politica", "letramento"],
+  "author": "",
+  "license": "MIT"
+}

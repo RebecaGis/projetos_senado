@@ -1,0 +1,22 @@
+{
+  "name": "e-Cidadania: Letramento Político",
+  "short_name": "PoliLero",
+  "description": "Aplicativo de letramento político e acompanhamento das consultas públicas do Senado Federal (e-Cidadania).",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#0F3B66",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
