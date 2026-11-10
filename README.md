@@ -1,5 +1,11 @@
 # 🏛️ e-Cidadania: Letramento Político Mobile
 
+<!-- project-badges:start -->
+![Interface: HTML · CSS · JavaScript](https://img.shields.io/static/v1?label=Interface&message=HTML%20%C2%B7%20CSS%20%C2%B7%20JavaScript&color=E34F26&style=flat)
+![Coleta: Python](https://img.shields.io/static/v1?label=Coleta&message=Python&color=3776AB&style=flat)
+[![Autoria: Rebeca Diniz Moura](https://img.shields.io/static/v1?label=Autoria&message=Rebeca%20Diniz%20Moura&color=8b5cf6&style=flat)](https://github.com/RebecaGis)
+<!-- project-badges:end -->
+
 Aplicativo móvel desenvolvido para facilitar o **letramento político** da população brasileira através da leitura, compreensão e acompanhamento das consultas públicas em tramitação no Senado Federal pelo portal **e-Cidadania** ([https://www12.senado.leg.br/ecidadania/principalmateria](https://www12.senado.leg.br/ecidadania/principalmateria)).
 
 ---
@@ -47,7 +53,7 @@ Aplicativo móvel desenvolvido para facilitar o **letramento político** da popu
 No terminal, entre na pasta do projeto e execute:
 
 ```powershell
-cd "C:\Users\96062875\.gemini\antigravity\scratch\letramento_politico"
+cd projetos_senado
 python server.py
 ```
 
